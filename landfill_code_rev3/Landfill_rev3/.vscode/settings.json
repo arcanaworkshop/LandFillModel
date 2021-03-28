@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.rmd": "markdown",
+        "adafruit_neopixel.h": "c"
+    }
+}

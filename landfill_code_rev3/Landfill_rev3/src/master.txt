@@ -1,0 +1,300 @@
+/**
+ * George Spearing
+ * Revision 3 of Landfill Model Code
+ * 8 Buttons for user input. Play one audio file and light
+ * up one section of the model. One LED always lit
+ * February 26, 2020
+ */
+
+#include <Arduino.h>
+#include <Adafruit_NeoPixel.h>
+#include <Wire.h>
+
+// define pins for lights
+#define FLAME_LED 2
+#define ELECTRIC_LED 3
+#define WASTE_LED A0
+#define GROUND_LED A1
+#define STRIP_PIN 4
+#define LED_COUNT 230
+
+// initialize NeoPixel strip
+Adafruit_NeoPixel strip(LED_COUNT, STRIP_PIN, NEO_GRB + NEO_KHZ800);
+
+// Define 74hc165 Pins
+/* How many shift register chips are daisy-chained.
+*/
+#define NUMBER_OF_SHIFT_CHIPS   1
+
+/* Width of data (how many ext lines).
+*/
+#define DATA_WIDTH   NUMBER_OF_SHIFT_CHIPS * 8
+
+/* Width of pulse to trigger the shift register to read and latch.
+*/
+#define PULSE_WIDTH_USEC   5
+
+/* Optional delay between shift register reads.
+*/
+#define POLL_DELAY_MSEC  150
+
+#define BYTES_VAL_T unsigned int
+
+// pin read values for shift register
+BYTES_VAL_T pinValues;
+BYTES_VAL_T oldPinValues;
+
+int ploadPin        = 5;  // Connects to Parallel load pin the 165
+int clockEnablePin  = 6;  // Connects to Clock Enable pin the 165
+int dataPin         = 7; // Connects to the Q7 pin the 165
+int clockPin        = 8; // Connects to the Clock pin the 165
+
+boolean ledState = false;
+
+// timmer memory
+unsigned long previous_time = 0;
+unsigned long current_time;
+unsigned long buttonOnAtTime = 0;
+
+// NeoPixel Color Definitions
+uint32_t red = strip.Color(125,0,0);
+uint32_t green = strip.Color(0,125,0);
+uint32_t blue = strip.Color(0,0,125);
+uint32_t yellow = strip.Color(125,125,0);
+uint32_t white = strip.Color(125,125,125);
+uint32_t magenta = strip.Color(125, 0, 125);
+uint32_t white_dim = strip.Color(30,30,30);
+uint32_t teal = strip.Color(20,60, 100);
+
+// NeoPixel Range Declarations for first pixel location
+// and number of pixels in range
+// and color for each section
+#define GROUNDWATER_COLOR blue
+const int groundWater_start = 67;
+const int groundWater_count = 7;
+const int groundWater2_start = 197;
+const int groundWater2_count = 33;
+#define LINER_COLOR green
+const int liner_start = 16;
+const int liner_count = 42;
+const int liner2_start = 74;
+const int liner2_count = 17;
+#define LEACHE_COLOR teal
+const int leache_start = 0;
+const int leache_count = 16;
+const int leache2_start = 58;
+const int leache2_count = 9;
+#define GAS_COLOR yellow
+const int gas_start = 91; 
+const int gas_count = 87;
+#define GARBAGE_COLOR magenta
+const int garbarge_start = 178;
+const int garbage_count = 19;
+
+// Leache pixel addresses:
+uint32_t Leache_Array[] = {17, 23, 30, 38, 45, 51};
+
+
+
+// Audio track time (in miliseconds)
+unsigned long onInterval = 1000; // define default value for 'on time'
+const unsigned long TRACK0_TIME = 22000;
+const unsigned long TRACK1_TIME = 4000;
+const unsigned long TRACK2_TIME = 20000;
+const unsigned long TRACK3_TIME = 22000;
+const unsigned long TRACK4_TIME = 26000;
+const unsigned long TRACK5_TIME = 22000;
+const unsigned long TRACK6_TIME = 14000;
+const unsigned long TRACK7_TIME = 26000;
+
+// function declarations
+BYTES_VAL_T read_shift_regs();
+void clearAll();
+void colorWipe(uint32_t color, int wait);
+void sendSlave(char msg);
+
+void setup() {
+    Wire.begin();
+    Serial.begin(9600);
+
+    // Initialize our digital pins...
+    pinMode(ploadPin, OUTPUT);
+    pinMode(clockEnablePin, OUTPUT);
+    pinMode(clockPin, OUTPUT);
+    pinMode(dataPin, INPUT);
+
+    // set initial state of register
+    digitalWrite(clockPin, LOW); 
+    digitalWrite(ploadPin, HIGH);
+
+    // set state of two LEDs
+    pinMode(FLAME_LED, OUTPUT);  
+    pinMode(ELECTRIC_LED, OUTPUT);
+    pinMode(WASTE_LED, OUTPUT);
+    pinMode(GROUND_LED, OUTPUT);
+
+    // start neo pixel string
+    strip.begin();
+    clearAll();
+
+    // test pixels on startup
+    colorWipe(white_dim,10);
+    clearAll();
+    
+
+    // Flame LED is always on
+    digitalWrite(FLAME_LED, HIGH);
+
+}
+
+void loop() {
+    current_time = millis();
+    pinValues = read_shift_regs();
+    if ((pinValues!=oldPinValues)){
+        pinValues = read_shift_regs();
+        buttonOnAtTime = millis();
+        switch(pinValues){
+            case 1: // electric power plant
+                clearAll();
+                sendSlave('a');
+                digitalWrite(ELECTRIC_LED, HIGH);
+                onInterval = TRACK0_TIME;
+                ledState = true;
+                break;
+            // case 2: // waste water
+            //     clearAll();
+            //     analogWrite(WASTE_LED, 255);
+            //     tmrpcm.play("TRACK001.wav");
+            //     onInterval = TRACK1_TIME;
+            //     ledState = true;
+            //     break;
+            case 4: // ground water
+                clearAll();
+                sendSlave('c');
+                strip.fill(GROUNDWATER_COLOR,groundWater_start,groundWater_count);
+                strip.fill(GROUNDWATER_COLOR, groundWater2_start,groundWater2_count);
+                strip.show();
+                onInterval = TRACK2_TIME;
+                ledState = true;
+                break;
+            case 8: // Liner
+                clearAll();
+                sendSlave('d');
+                strip.fill(LINER_COLOR,liner_start,liner_count);
+                strip.fill(LINER_COLOR, liner2_start, liner2_count);
+                strip.show();
+                onInterval = TRACK3_TIME;
+                ledState = true;
+                break;
+            case 16: // Leache
+                clearAll();
+                sendSlave('e');
+                analogWrite(WASTE_LED, 255);
+                strip.fill(LEACHE_COLOR,leache_start,leache_count);
+                strip.fill(LEACHE_COLOR, leache2_start, leache2_count);
+                for(int i=0; i<(6); i++){
+                    strip.setPixelColor(Leache_Array[i],LEACHE_COLOR);
+                }
+                strip.show();
+                onInterval = TRACK4_TIME;
+                ledState = true;
+                break;
+            case 32: // gas collection
+                clearAll();
+                sendSlave('f');
+                strip.fill(GAS_COLOR,gas_start,gas_count);
+                strip.show();
+                onInterval = TRACK5_TIME;
+                ledState = true;
+                break;
+            case 64: // garbage
+                clearAll();
+                sendSlave('g');
+                strip.fill(GARBAGE_COLOR,garbarge_start,garbage_count);
+                strip.show();
+                onInterval = TRACK6_TIME;
+                ledState = true;
+                break;
+            case 128: // ground (surface)
+                clearAll();
+                sendSlave('h');
+                analogWrite(GROUND_LED, 255);
+                onInterval = TRACK7_TIME;
+                ledState = true;
+                break;
+         }
+    }
+
+    // Turn off light and stop playback if something is playing (depending on onInterval)
+    if (ledState){
+        unsigned long currentMillis = millis();
+        if ((unsigned long)(currentMillis - buttonOnAtTime) >= onInterval){
+            clearAll();
+            ledState = false;
+        }
+    }
+
+    previous_time = millis();
+    oldPinValues = pinValues;
+
+}
+
+// Code from Arduino Shift Register Example
+// Reads in button values from shift register
+BYTES_VAL_T read_shift_regs(){
+    long bitVal;
+    BYTES_VAL_T bytesVal = 0;
+
+    /* Trigger a parallel Load to latch the state of the data lines,
+    */
+    digitalWrite(clockEnablePin, HIGH);
+    digitalWrite(ploadPin, LOW);
+    delayMicroseconds(PULSE_WIDTH_USEC);
+    digitalWrite(ploadPin, HIGH);
+    digitalWrite(clockEnablePin, LOW);
+
+    /* Loop to read each bit value from the serial out line
+     * of the SN74HC165N.
+    */
+    for(int i = 0; i < DATA_WIDTH; i++)
+    {
+        bitVal = digitalRead(dataPin);
+
+        /* Set the corresponding bit in bytesVal.
+        */
+        bytesVal |= (bitVal << ((DATA_WIDTH-1) - i));
+
+        /* Pulse the Clock (rising edge shifts the next bit).
+        */
+        digitalWrite(clockPin, HIGH);
+        delayMicroseconds(PULSE_WIDTH_USEC);
+        digitalWrite(clockPin, LOW);
+    }
+
+    return(bytesVal);
+}
+
+// Function to stop audio and turn off all lights
+void clearAll(){
+    sendSlave('z');
+    digitalWrite(ELECTRIC_LED, LOW);
+    analogWrite(WASTE_LED, 0);
+    analogWrite(GROUND_LED, 0);
+    strip.clear();
+    strip.show();
+}
+
+// Function to sweep through all pixels
+void colorWipe(uint32_t color, int wait) {
+    for(uint16_t i=0; i<strip.numPixels(); i++) {
+        strip.setPixelColor(i, color);
+        strip.show();
+        delay(wait);
+        }
+}
+
+void sendSlave(char msg){
+    Wire.beginTransmission(1);
+    Wire.write(msg);
+    Wire.endTransmission();
+}
