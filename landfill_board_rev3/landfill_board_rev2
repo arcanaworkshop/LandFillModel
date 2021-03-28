@@ -1,0 +1,37 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>KiCad BOM Example 5</title>
+    </head>
+    <body>
+    <h1>/home/george/Documents/Arcana/landfillBoard/landfill_board_rev3/landfill_board_rev2.sch</h1>
+    <p>Tue 11 Feb 2020 09:33:01 PM EST</p>
+    <p>Eeschema 5.1.5-52549c5~84~ubuntu18.04.1</p>
+    <p><b>Component Count:</b>68</p>
+    <table>
+    <tr><th style='width:640px'>Ref</th><th>Qnty</th><th>Value</th><th>Part</th><th>Footprint</th><th>Description</th><th>Vendor</th></tr>
+    <tr><td>C1, C2</td><td>2</td><td>.1u</td><td>Device:C</td><td>Capacitor_SMD:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder</td><td>Unpolarized capacitor</td><td></td></tr>
+    <tr><td>C3</td><td>1</td><td>1u</td><td>Device:C</td><td>Capacitor_SMD:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder</td><td>Unpolarized capacitor</td><td></td></tr>
+    <tr><td>C4</td><td>1</td><td>10u</td><td>Device:C</td><td>Capacitor_SMD:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder</td><td>Unpolarized capacitor</td><td></td></tr>
+    <tr><td>C5, C6</td><td>2</td><td>22pF</td><td>Device:C</td><td>Capacitor_SMD:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder</td><td>Unpolarized capacitor</td><td></td></tr>
+    <tr><td>D1</td><td>1</td><td>LED</td><td>Device:LED</td><td>LED_SMD:LED_0603_1608Metric_Pad1.05x0.95mm_HandSolder</td><td>Light emitting diode</td><td></td></tr>
+    <tr><td>J1, J2, J3, J4, J5, J6, J7, J9, J10, J11, J12, J13, J14, J15, J16, J17, J18, J19, J20, J21, J22, J23, J24, J25</td><td>24</td><td>Conn_01x02</td><td>Connector_Generic:Conn_01x02</td><td>Connector_PinHeader_2.00mm:PinHeader_1x02_P2.00mm_Vertical</td><td>Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)</td><td></td></tr>
+    <tr><td>J8</td><td>1</td><td>Conn_01x06</td><td>Connector_Generic:Conn_01x06</td><td>Connector_PinHeader_2.54mm:PinHeader_1x06_P2.54mm_Vertical</td><td>Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)</td><td></td></tr>
+    <tr><td>J26</td><td>1</td><td>Conn_02x03_Odd_Even</td><td>Connector_Generic:Conn_02x03_Odd_Even</td><td>Connector_PinHeader_2.54mm:PinHeader_2x03_P2.54mm_Vertical</td><td>Generic connector, double row, 02x03, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)</td><td></td></tr>
+    <tr><td>J27</td><td>1</td><td>AudioJack2_Ground</td><td>Connector:AudioJack2_Ground</td><td>Connector_Audio:Jack_3.5mm_CUI_SJ-3523-SMT_Horizontal</td><td>Audio Jack, 2 Poles (Mono / TS), Grounded Sleeve</td><td></td></tr>
+    <tr><td>J28</td><td>1</td><td>Barrel_Jack_Switch</td><td>Connector:Barrel_Jack_Switch</td><td>Connector_BarrelJack:BarrelJack_CUI_PJ-036AH-SMT_Horizontal</td><td>DC Barrel Jack with an internal switch</td><td></td></tr>
+    <tr><td>J29</td><td>1</td><td>Conn_01x03</td><td>Connector_Generic:Conn_01x03</td><td>Connector_PinSocket_2.54mm:PinSocket_1x03_P2.54mm_Vertical</td><td>Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)</td><td></td></tr>
+    <tr><td>R1, R2, R3, R4, R5, R6, R7, R8, R9, R10, R11, R12</td><td>12</td><td>10k</td><td>Device:R</td><td>Resistor_SMD:R_0603_1608Metric_Pad1.05x0.95mm_HandSolder</td><td>Resistor</td><td></td></tr>
+    <tr><td>R13, R14, R15, R16, R17, R18, R19, R20, R21, R22, R23, R24, R25</td><td>13</td><td>330</td><td>Device:R</td><td>Resistor_SMD:R_0603_1608Metric_Pad1.05x0.95mm_HandSolder</td><td>Resistor</td><td></td></tr>
+    <tr><td>U1, U3</td><td>2</td><td>74HC165</td><td>Registers_More:74HC165</td><td>Package_SO:SOIC-16_3.9x9.9mm_P1.27mm</td><td></td><td></td></tr>
+    <tr><td>U2</td><td>1</td><td>ATmega328P-AU</td><td>MCU_Microchip_ATmega:ATmega328P-AU</td><td>Package_QFP:TQFP-32_7x7mm_P0.8mm</td><td>20MHz, 32kB Flash, 2kB SRAM, 1kB EEPROM, TQFP-32</td><td></td></tr>
+    <tr><td>U4, U5</td><td>2</td><td>74HC595</td><td>74xx:74HC595</td><td>Package_SO:SSOP-16_4.4x5.2mm_P0.65mm</td><td>8-bit serial in/out Shift Register 3-State Outputs</td><td></td></tr>
+    <tr><td>U6</td><td>1</td><td>R-78E5.0-1.0</td><td>Regulator_Switching:R-78E5.0-1.0</td><td>Converter_DCDC:Converter_DCDC_RECOM_R-78E-0.5_THT</td><td>1A Step-Down DC/DC-Regulator, 7-28V input, 5V fixed Output Voltage, LM78xx replacement, -40°C to +85°C, SIP3</td><td></td></tr>
+    <tr><td>Y1</td><td>1</td><td>Crystal</td><td>Device:Crystal</td><td>Crystal:Crystal_HC49-U_Vertical</td><td>Two pin crystal</td><td></td></tr><!--TABLEROW-->
+    </table>
+    </body>
+</html>
+    
